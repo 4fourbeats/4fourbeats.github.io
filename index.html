@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东坡工坊 - 一位工程师的经世才华</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 引入古风字体 Noto Serif SC (思源宋体) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 自定义古风样式 -->
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #fcfaf2; /* 宣纸白背景 */
+            color: #3a2e2e; /* 深棕色文字，如墨 */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+            color: #583E2A; /* 雅棕色标题 */
+            font-weight: 600;
+        }
+
+        /* 模拟印章效果 */
+        .seal-stamp {
+            position: absolute;
+            top: 2rem;
+            right: 3rem;
+            width: 60px;
+            height: 60px;
+            background-color: #a84343; /* 朱砂红 */
+            color: #fcfaf2; /* 宣纸白文字 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #8f3a3a; /* 印泥边缘 */
+            border-radius: 4px;
+            transform: rotate(8deg); /* 随意盖下的效果 */
+            opacity: 0.85;
+            z-index: 10;
+            /* 隐藏在小屏幕上 */
+            display: none;
+        }
+        
+        @media (min-width: 1024px) {
+            .seal-stamp {
+                display: flex;
+            }
+        }
+
+        /* 章节标题装饰 */
+        .section-title {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80%;
+            height: 3px;
+            background-color: #a84343; /* 朱砂红下划线 */
+        }
+
+        /* 卡片/章节样式，模拟画卷或册页 */
+        .exhibit-card {
+            background-color: #ffffff;
+            border: 1px solid #e0d8cc; /* 淡褐色边框 */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(88, 62, 42, 0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .exhibit-card:hover {
+            box-shadow: 0 8px 20px rgba(88, 62, 42, 0.12);
+        }
+
+        /* 模拟流程图样式 */
+        .flow-chart {
+            display: flex;
+            flex-wrap: wrap; /* 移动端换行 */
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .flow-box {
+            border: 2px solid #8c6a4d; /* 边框 */
+            background-color: #f9f6f0;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-width: 160px;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #a84343; /* 暗红色箭头 */
+            font-weight: bold;
+            display: block; /* 移动端在方块间显示 */
+            transform: rotate(90deg); /* 移动端竖向排列 */
+        }
+        
+        @media (min-width: 768px) {
+            .flow-arrow {
+                transform: rotate(0deg); /* 桌面端横向 */
+            }
+        }
+
+        /* --- 新增：互动与动画样式 --- */
+
+        /* 1. 秧马 (Yangma) - 悬停时的轻微摆动 */
+        .yangma-img-container {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .yangma-img-container:hover img {
+            animation: gentle-bob 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes gentle-bob {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-5px); /* 向上移动5像素 */
+            }
+        }
+
+        /* 2. 石炭 (Coal) & 3. 苏堤 (Su Di) - 滚动渐入效果 */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 错落渐入的延迟 */
+        .reveal-on-scroll.stagger-1 { transition-delay: 0.1s; }
+        .reveal-on-scroll.stagger-2 { transition-delay: 0.2s; }
+        .reveal-on-scroll.stagger-3 { transition-delay: 0.3s; }
+        .reveal-on-scroll.stagger-4 { transition-delay: 0.4s; }
+        .reveal-on-scroll.stagger-5 { transition-delay: 0.5s; }
+        .reveal-on-scroll.stagger-6 { transition-delay: 0.6s; }
+        .reveal-on-scroll.stagger-7 { transition-delay: 0.7s; }
+
+
+        /* 3. 苏堤 (Su Di) - 图像悬停水波光晕 */
+        .sudi-img-container {
+            transition: box-shadow 0.4s ease;
+            border-radius: 8px; /* 确保光晕贴合圆角 */
+        }
+        .sudi-img-container:hover {
+            box-shadow: 0 0 20px 5px rgba(58, 90, 120, 0.25); /* 模拟水波的淡蓝色光晕 */
+        }
+
+    </style>
+</head>
+<body class="antialiased leading-relaxed">
+
+    <!-- 页面容器 -->
+    <div class="relative max-w-5xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        
+        <!-- 模拟印章 -->
+        <div class="seal-stamp">
+            <span>东坡</span>
+        </div>
+
+        <!-- 1. 头部和引言 -->
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">东坡工坊</h1>
+            <p class="text-xl md:text-2xl text-gray-700" style="color: #583E2A;">一位工程师的经世才华</p>
+        </header>
+
+        <section class="prose prose-lg max-w-3xl mx-auto text-center mb-20 text-lg">
+            <p>提起苏东坡，世人多醉心于他“大江东去”的诗词豪情，或“一蓑烟雨”的人生豁达。然拨开风月，我们更惊叹于他作为“工程师”的经世才华。苏轼的仁心，不仅在笔端，更在广阔大地上。</p>
+        </section>
+
+        <!-- 展厅内容区域 -->
+        <main class="space-y-16">
+
+            <!-- 展区一：《秧马》 -->
+            <section id="yangma" class="exhibit-card reveal-on-scroll">
+                <div class="md:flex items-center">
+                    <!-- 图片区 - 添加了 .yangma-img-container -->
+                    <div class="md:w-1/2 p-6 bg-gray-50 yangma-img-container" style="background-color: #f9f6f0;">
+                        <img src="data:image/jpeg;base64,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" 
+                             alt="[秧马的复原图或古画]" 
+                             class="w-full h-auto rounded-lg shadow-md object-cover"
+                             onerror="this.src='https://placehold.co/600x400/f0e8d8/583E2A?text=图像加载失败'; this.alt='秧马复原图加载失败'">
+                        <p class="text-center text-sm text-gray-600 mt-2">（《王祯农书》中的秧马插图）</p>
+                    </div>
+                    <!-- 文字说明区 -->
+                    <div class="md:w-1/2 p-8 md:p-10">
+                        <h2 class="text-3xl section-title reveal-on-scroll">巧具 · 《秧马》</h2>
+                        <div class="prose prose-lg mt-4 text-gray-800 space-y-4 reveal-on-scroll stagger-1">
+                            <p>“秧马”是一种半自动化的插秧工具。苏轼在贬谪期间，深感农民“身如弩，足如矢”弯腰插秧之苦，遂推广了这种农具。</p>
+                            <p>它结构简单，以竹木制成，状如小马。农民可骑坐其上，用脚蹬地，在水田里倒退移动，双手则解放出来快速插秧。这不仅极大提高了效率，更将农民从日复一日的“弯腰”劳作中解放出来，是对民生疾苦最直接的关怀。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 展区二：《石炭》 -->
+            <section id="shitan" class="exhibit-card reveal-on-scroll">
+                <div class="flex flex-col">
+                    <!-- 文字说明区 -->
+                    <div class="p-8 md:p-10">
+                        <h2 class="text-3xl section-title reveal-on-scroll">灼见 · 《石炭》</h2>
+                        <div class="prose prose-lg mt-4 text-gray-800 space-y-4 reveal-on-scroll stagger-1">
+                            <p>苏轼在徐州任知州时，当地饱受洪水与燃料短缺之苦。他敏锐地发现了“石炭”（煤）的巨大潜力，并写下了堪称“能源转型报告”的《石炭》诗。</p>
+                            <p>他不仅是“发现者”，更是“流程优化者”。他分析了旧法炼铁“薪炭贵”的痛点，推动了以煤代薪的燃料革命。同时，他还优化了开采和冶炼流程，解决了运输和燃烧效率问题，为徐州的“再工业化”打下了坚实基础。</p>
+                        </div>
+                    </div>
+                    <!-- 流程图示区 - 为流程图元素添加 .reveal-on-scroll 和 .stagger-X -->
+                    <div class="w-full p-6 md:p-10" style="background-color: #fdfaf5;">
+                        <h3 class="text-xl font-semibold text-center mb-6 reveal-on-scroll">苏轼的能源流程优化</h3>
+                        <div class="flow-chart">
+                            <div class="flow-box reveal-on-scroll stagger-1">
+                                <h4 class="font-bold text-lg">痛点：旧法炼铁</h4>
+                                <p class="text-sm">薪炭昂贵，山林耗竭</p>
+                            </div>
+                            <div class="flow-arrow md:block hidden reveal-on-scroll stagger-2">→</div>
+                            <div class="flow-arrow block md:hidden reveal-on-scroll stagger-2">↓</div>
+                            <div class="flow-box reveal-on-scroll stagger-3">
+                                <h4 class="font-bold text-lg">苏轼洞察：石炭</h4>
+                                <p class="text-sm">发现并推广煤炭</p>
+                            </div>
+                            <div class="flow-arrow md:block hidden reveal-on-scroll stagger-4">→</div>
+                            <div class="flow-arrow block md:hidden reveal-on-scroll stagger-4">↓</div>
+                            <div class="flow-box reveal-on-scroll stagger-5">
+                                <h4 class="font-bold text-lg">流程重构：新法</h4>
+                                <p class="text-sm">以煤代薪，优化开采</p>
+                            </div>
+                            <div class="flow-arrow md:block hidden reveal-on-scroll stagger-6">→</div>
+                            <div class="flow-arrow block md:hidden reveal-on-scroll stagger-6">↓</div>
+                            <div class="flow-box reveal-on-scroll stagger-7">
+                                <h4 class="font-bold text-lg">成果：高效经济</h4>
+                                <p class="text-sm">能源转型，民生改善</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 展区三：《苏堤》 -->
+            <section id="sudi" class="exhibit-card reveal-on-scroll">
+                <div class="md:flex items-center">
+                    <!-- 文字说明区 (这次文字在左) -->
+                    <div class="md:w-1/2 p-8 md:p-10">
+                        <h2 class="text-3xl section-title reveal-on-scroll">宏图 · 苏堤</h2>
+                        <div class="prose prose-lg mt-4 text-gray-800 space-y-4">
+                            <p class="reveal-on-scroll stagger-1">苏堤，不仅是“西湖十景”之首，更是一项卓越的“城市自动化”水利系统工程。</p>
+                            <p class="reveal-on-scroll stagger-2">苏轼治理杭州，面对的是西湖淤塞、水系不畅的难题。他并非简单清淤，而是构建了一个系统：</p>
+                            <!-- 为列表项添加 .reveal-on-scroll 和 .stagger-X -->
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li class="reveal-on-scroll stagger-3"><strong>系统闭环：</strong> 挖出的淤泥筑成苏堤，既是交通要道，又是水流分割线。</li>
+                                <li class="reveal-on-scroll stagger-4"><strong>自动调蓄：</strong> 堤上设六桥（即“六井”），桥下设闸门，利用钱塘江潮汐与西湖的水位差，实现自动冲淤和灌溉。</li>
+                                <li class="reveal-on-scroll stagger-5"><strong>生态工程：</strong> 在湖中种植菱角，“以P养P”（以经济作物管理水体），既净化水质，又增加百姓收入。</li>
+                            </ul>
+                            <p class="reveal-on-scroll stagger-6">这套“清淤-筑堤-调蓄-生态”的组合拳，是超越时代的系统工程思维。</p>
+                        </div>
+                    </div>
+                    <!-- 图片区 - 添加 .sudi-img-container -->
+                    <div class="md:w-1/2 p-6 sudi-img-container reveal-on-scroll" style="background-color: #f4f8fa;">
+                        <img src="http://hznews.hangzhou.com.cn/wghz/images/2019-03/15/288de6a7-9988-4af8-a12d-2dd4eaec2186.jpg" 
+                             alt="[苏堤水利系统示意图]" 
+                             class="w-full h-auto rounded-lg shadow-md object-cover"
+                             onerror="this.src='https://placehold.co/600x450/d8e8f0/3a5a78?text=图像加载失败'; this.alt='苏堤示意图加载失败'">
+                        <p class="text-center text-sm text-gray-600 mt-2">（苏堤六桥，实现了西湖的自动调蓄）</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="text-center mt-20 py-8 border-t border-gray-300" style="border-color: #e0d8cc;">
+            <p class="text-lg" style="color: #583E2A;">观 止</p>
+            <p class="text-sm text-gray-500 mt-1">东坡工坊 · 数字展厅</p>
+        </footer>
+
+    </div>
+
+    <!-- 新增：用于滚动渐入效果的JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const revealElements = document.querySelectorAll('.reveal-on-scroll');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // 当元素进入视口时
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        // 可选：添加 .is-visible 后停止观察，以防重复触发
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1 // 元素进入视口10%时触发
+            });
+
+            // 观察所有带 .reveal-on-scroll 的元素
+            revealElements.forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+
+</body>
+</html>
